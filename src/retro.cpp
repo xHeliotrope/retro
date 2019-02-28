@@ -59,13 +59,16 @@ struct PyRetroEmulator {
 		return m_re.unserialize(PyBytes_AsString(o.ptr()), PyBytes_Size(o.ptr()));
 	}
 
-	py::array_t<uint8_t> getScreen() {
+	py::array_t<uint8_t> getScreen(py::bool_ grey) {
 		long w = m_re.getImageWidth();
 		long h = m_re.getImageHeight();
 		py::array_t<uint8_t> arr({ { h, w, 3 } });
 		uint8_t* data = arr.mutable_data();
 		Image out(Image::Format::RGB888, data, w, h, w);
 		Image in;
+		if(grey) {
+			in = Image(Image::Format::G8, m_re.getImageData(), w, h, m_re.getImagePitch());
+		}
 		if (m_re.getImageDepth() == 16) {
 			in = Image(Image::Format::RGB565, m_re.getImageData(), w, h, m_re.getImagePitch());
 		} else if (m_re.getImageDepth() == 32) {

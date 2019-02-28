@@ -15,7 +15,7 @@ __all__ = ['RetroEnv']
 
 
 class RetroEnv(gym.Env):
-    metadata = {'render.modes': ['human', 'rgb_array'],
+    metadata = {'render.modes': ['human', 'rgb_array', 'grayscale_array'],
                 'video.frames_per_second': 60.0}
 
     def compute_step(self):
@@ -241,10 +241,14 @@ class RetroEnv(gym.Env):
                 self.viewer.close()
             return
 
-        img = self.get_screen() if self.img is None else self.img
         if mode == "rgb_array":
+            img = self.get_screen() if self.img is None else self.img
+            return img
+        elif mode == "grayscale_array":
+            img = self.get_screen(gray=False) if self.img is None else self.img
             return img
         elif mode == "human":
+            img = self.get_screen() if self.img is None else self.img
             if self.viewer is None:
                 from gym.envs.classic_control.rendering import SimpleImageViewer
                 self.viewer = SimpleImageViewer()
@@ -270,9 +274,10 @@ class RetroEnv(gym.Env):
             blocks.append(arr)
         return np.concatenate(blocks)
 
-    def get_screen(self, player=0):
+    def get_screen(self, player=0, **kwargs):
         img = self.em.get_screen()
         x, y, w, h = self.data.crop_info(player)
+        print(x, y, w, h)
         if not w or x + w > img.shape[1]:
             w = img.shape[1]
         else:
