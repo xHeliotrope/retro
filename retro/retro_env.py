@@ -245,7 +245,7 @@ class RetroEnv(gym.Env):
             img = self.get_screen() if self.img is None else self.img
             return img
         elif mode == "grayscale_array":
-            img = self.get_screen(gray=False) if self.img is None else self.img
+            img = self.get_screen() if self.img is None else self.img
             return img
         elif mode == "human":
             img = self.get_screen() if self.img is None else self.img
@@ -277,7 +277,7 @@ class RetroEnv(gym.Env):
     def get_screen(self, player=0, **kwargs):
         img = self.em.get_screen()
         x, y, w, h = self.data.crop_info(player)
-        print(x, y, w, h)
+        print(img.shape)
         if not w or x + w > img.shape[1]:
             w = img.shape[1]
         else:
